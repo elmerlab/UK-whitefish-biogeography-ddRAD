@@ -19,6 +19,8 @@ mkdir ./Desktop/biogeography
 mkdir ./Desktop/biogeography/00.Raw_reads ./Desktop/biogeography/01.Demultiplexed_reads ./Desktop/biogeography/02.Trimmomatic_filtering ./Desktop/biogeography/03.Assembly ./Desktop/biogeography/04.bam_alignments ./Desktop/biogeography/05.Stacks ./Desktop/biogeography/06.Phylogenetics ./Desktop/biogeography/07.Population_genetics
 ```
 
+### Preparing the data for population genomics analyses
+We are going to demultiplex raw reads, filter low reads out, align to reference genome, and build a STACKS catalog.
 
 #### 01. Demultiplex raw reads
 Use [process_radtags](http://catchenlab.life.illinois.edu/stacks/comp/process_radtags.php) to demultiplex Illumina raw data.
@@ -74,6 +76,26 @@ R2=${R1//.P1.fq.gz/.P2.fq.gz}
 base=$(basename $R1 .P1.fq.gz)
 echo "$base"
 bwa mem -t 4 /03.Assembly/EW_assembly.fa $R1 $R2 | samtools view -bSq 20 | \
-samtools sort -o ./4.bam_alignments/$base.bam
+samtools sort -o ./04.bam_alignments/$base.bam
 done
 ```
+
+
+#### 04. Build Stacks catalog
+
+For this project we used [STACKS v.2.4.1](http://catchenlab.life.illinois.edu/stacks/). We are using the `ref_map.pl` script to build a catalog with referenced aligned reads.
+
+```{bash, eval = FALSE}
+ref_map.pl -T 4 --samples ./04.bam_alignments/ -o ./05.Stacks --popmap ./popmap_2_biogeography.txt
+```
+
+
+### Population genomics and phylogenetics analyses 
+
+From this point onward, we are filtering and generating datasets for different analyses.
+
+
+
+
+
+
